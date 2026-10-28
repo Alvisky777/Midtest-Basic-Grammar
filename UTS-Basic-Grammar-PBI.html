@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Midterm Test – Basic Grammar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--tx:#1b1f24;--mu:#667085;--ac:#2557d6;--bd:#dde1e7;--sel:#e8effd;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#14171c;--card:#1d222a;--tx:#eef0f3;--mu:#9aa4b2;--ac:#6c93f5;--bd:#333b47;--sel:#243452;color-scheme:dark}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.w{max-width:760px;margin:0 auto;padding:14px}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:12px}
+h1{font-size:21px;margin:0 0 6px}h2{font-size:17px;margin:22px 0 8px;color:var(--ac)}
+p{margin:6px 0;color:var(--mu)}
+input[type=text]{width:100%;padding:12px;margin:6px 0;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font-size:16px}
+button{font:inherit;border:0;border-radius:10px;padding:13px 22px;background:var(--ac);color:#fff;cursor:pointer}
+.bar{position:sticky;top:0;background:var(--bg);display:flex;justify-content:space-between;padding:10px 2px;font-weight:600;z-index:5;border-bottom:1px solid var(--bd);margin-bottom:10px;padding-top:calc(10px + env(safe-area-inset-top,0px))}
+.note{font-size:14px;background:var(--sel);border-radius:8px;padding:8px 10px;color:var(--tx);margin-bottom:10px}
+.t{color:var(--tx);font-size:17px;margin:0 0 8px}
+.opts{display:grid;grid-template-columns:1fr;gap:6px}
+@media(min-width:620px){.opts{grid-template-columns:1fr 1fr}}
+label{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1px solid var(--bd);border-radius:10px;cursor:pointer}
+label.s{background:var(--sel);border-color:var(--ac)}
+input[type=radio]{margin-top:5px;flex:none}
+#warn{position:fixed;inset:0;background:rgba(0,0,0,.92);color:#fff;display:none;place-items:center;text-align:center;padding:30px;z-index:99}
+pre{white-space:pre-wrap;word-break:break-all;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:12px;font-size:13px}
+</style></head><body><div class="w" id="app"></div>
+<div id="warn"><div><h1>⚠️ Warning</h1><p style="color:#fff" id="wt"></p><br><button onclick="document.getElementById('warn').style.display='none'">Back to test</button></div></div>
+<script>
+const DUR=60*60, MAXV=3, KEY="uts_pbi_grammar_v2";
+const PARTS=[
+["Part 1  Parts of Speech",""],
+["Part 2  Phrases, Clauses and Sentence Elements",""],
+["Part 3  Basic Sentence Patterns","Pattern key: S = subject; V = verb; O = object; C = complement. In S–V–O–O, the first object is indirect and the second is direct. In S–V–O–C, C is an object complement."],
+["Part 4  The Noun System",""],
+["Part 5  The Verb System and Agreement",""],
+["Part 6  Simple Present and Present Progressive",""],
+["Part 7  Simple Past and Past Progressive",""]];
+const START=[0,7,14,21,28,36,43];
+// [question, [A,B,C,D]]
+const Q=[
+["The guide spoke ___ so that everyone could understand the instructions. Choose the correct word form.",["clearness","cleared","clearly","clear"]],
+["We enjoyed the ___ of the small village after a busy week in the city. Choose the correct noun.",["pacify","peacefully","peace","peaceful"]],
+["The hotel staff were very ___ when we asked for directions. Choose the correct adjective.",["help","helpfully","helpful","helpfulness"]],
+["In “We stayed inside because it was raining,” what part of speech is “because”?",["Conjunction","Pronoun","Preposition","Adverb"]],
+["In “The train arrived after lunch,” what part of speech is “after”?",["Verb","Adjective","Conjunction","Preposition"]],
+["In “This jacket is expensive, but it looks comfortable,” which word is a pronoun?",["comfortable","expensive","This","it"]],
+["Choose the sentence in which “work” is used as a noun.",["Can you work on Saturday?","My work involves helping customers.","I work in a shop near the station.","They work together every Monday."]],
+["Which group of words is a noun phrase?",["because the man was friendly","the man answered politely","the friendly man at the desk","when the man arrived"]],
+["Which group of words is a dependent clause?",["when the last bus arrived","the last bus arrived late","at the bus stop","the last bus from town"]],
+["Which option is a complete sentence?",["The report on the kitchen table.","Finishing the report before dinner.","Although she was tired, she finished the report.","Although she was tired after work."]],
+["What is the complete subject of “The students in the front row asked several questions”?",["The students in the front row","several questions","The students","the front row"]],
+["What is the direct object in “My neighbour borrowed my bicycle yesterday”?",["My neighbour","yesterday","borrowed","my bicycle"]],
+["What is the subject complement in “The children became hungry after the walk”?",["The children","hungry","became","after the walk"]],
+["Which revision correctly joins the two ideas: “I missed the bus. I walked to college”?",["Because I missed the bus, so I walked to college.","I missed the bus, so I walked to college.","I missed the bus because walked to college.","I missed the bus, I walked to college."]],
+["What is the basic pattern of “The guests arrived”?",["S–V","S–V–O","S–V–O–O","S–V–C"]],
+["What is the basic pattern of “Our teacher explained the rules”?",["S–V–O","S–V–C","S–V","S–V–O–C"]],
+["What is the basic pattern of “The journey was tiring”?",["S–V–O–O","S–V–C","S–V–O–C","S–V–O"]],
+["What is the basic pattern of “My cousin lent me her laptop”?",["S–V–O–C","S–V–C","S–V–O","S–V–O–O"]],
+["What is the basic pattern of “The long wait made everyone impatient”?",["S–V–C","S–V–O","S–V–O–O","S–V–O–C"]],
+["Which sentence follows the S–V–C pattern?",["The gardener watered the flowers.","The children picked some flowers.","The gardener gave us some flowers.","The flowers smell wonderful."]],
+["Which sentence follows the S–V–O–O pattern?",["The drinks made the customers happy.","The waiter brought the customers their drinks.","The customers seemed thirsty.","The waiter brought their drinks."]],
+["We need some ___ about the course before we choose our classes.",["an information","many information","information","informations"]],
+["There are only ___ apples left, so we should buy some more.",["a few","a bit of","a little","much"]],
+["How ___ luggage can each passenger take on the flight?",["a few","much","many","several"]],
+["The ___ are playing outside while their parents prepare dinner. Choose the correct plural noun.",["child","childrens","children","childs"]],
+["One student owns this notebook. Complete the sentence: “It is the ___ notebook.”",["students’s","students’","students","student’s"]],
+["My brother is ___ engineer. He works for ___ company that built this bridge.",["the / an","a / the","an / the","a / a"]],
+["Choose the correct phrase to complete “Could you give me ___ about finding a part-time job?”",["a piece of advice","some advices","a few advice","an advice"]],
+["The books on the shelf ___ to my older sister.",["has belonged","is belonging","belong","belongs"]],
+["Each student in our class ___ a school email address.",["has","having","are having","have"]],
+["My parents ___ near the coast, but my brother ___ in the city.",["lives / live","live / lives","live / live","lives / lives"]],
+["There ___ enough chairs for everyone, so nobody has to stand.",["be","is","are","has"]],
+["You should ___ the instructions before you start the exercise.",["to read","reads","read","reading"]],
+["In “The students are preparing a presentation,” which word is the auxiliary verb?",["are","students","preparing","presentation"]],
+["Choose the sentence with correct subject–verb agreement.",["The woman who lives next door works at the hospital.","The woman who live next door work at the hospital.","The woman who lives next door work at the hospital.","The woman who live next door works at the hospital."]],
+["Complete the question: “___ your sister have a driving licence?”",["Has","Does","Do","Is"]],
+["Sam usually ___ lunch at home, but today he ___ at a café because his kitchen is being repaired.",["eats / are eating","eats / is eating","is eating / eats","eat / is eating"]],
+["Please wait a moment. I ___ to finish this email before the meeting starts.",["trying","am trying","tries","try"]],
+["My neighbours ___ television in the morning; they prefer listening to the radio.",["do not watch","does not watch","not watching","are not watch"]],
+["Which question correctly asks about an action happening now?",["Why you are wearing a coat indoors?","Why are you wear a coat indoors?","Why do you wearing a coat indoors?","Why are you wearing a coat indoors?"]],
+["I ___ this bag belongs to you. It has your name on it. Choose the usual standard form.",["am believing","believe","believes","believing"]],
+["Our regular teacher is away. A different teacher ___ our class this week.",["are teaching","is teaching","teach","teaching"]],
+["Choose the sentence that describes a general fact.",["The water in this bottle is freezing now.","I am putting the water in the freezer.","The children are watching the ice melt.","Water freezes at zero degrees Celsius under normal conditions."]],
+["We ___ a small apartment near the station during our holiday last month.",["are renting","rent","rented","were rent"]],
+["At nine o’clock last night, I ___ for my exam. I did not finish until eleven.",["am studying","were studying","study","was studying"]],
+["While Anna ___ home from work, she ___ an old friend near the station.",["was walking / meets","was walking / met","walked / was meeting","is walking / met"]],
+["We ___ the match yesterday because our television was broken.",["did not watch","do not watch","were not watch","did not watched"]],
+["Which question correctly asks about a completed past event?",["Where did you bought your new phone?","Where you bought your new phone?","Where were you buy your new phone?","Where did you buy your new phone?"]],
+["While I was preparing dinner, my flatmate ___ the table. We were doing these jobs at the same time.",["were setting","sets","is setting","was setting"]],
+["I ___ my homework, ___ my bag, and then ___ to bed. Choose the correct past-tense sequence.",["finished / packed / went","finish / packed / went","was finishing / pack / go","finished / was packing / go"]]
+];
+const K=atob("QUREQUJEQ0RCQkRBQkJCQUFDQ0JBQ0FDRENCQUNCREREQkFBQkJEQUNBQ0JEREFDQ0M=").split("").reverse(),N=Q.length,$=e=>document.getElementById(e),app=$("app");
+let S=load()||{ans:Array(N).fill(null),v:0,run:false,done:false,end:0,name:"",nim:"",code:"",sc:0},T,lastV=0;
+function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const esc=s=>{const d=document.createElement("div");d.textContent=s;return d.innerHTML};
+const fmt=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+const left=()=>Math.max(0,Math.round((S.end-Date.now())/1000));
+const cnt=()=>S.ans.filter(a=>a!==null).length;
+
+function home(){
+ app.innerHTML=`<div class="c"><h1>Midterm Test – Basic Grammar</h1><p>S1 English Education · ${N} multiple-choice questions · ${DUR/60} minutes</p>
+ <p><b>Rules:</b> stay on this page during the test. Switching apps, tabs or windows is recorded; on the ${MAXV}rd violation your answers are submitted automatically. Do not refresh or close the page. Your score appears after you submit.</p>
+ <input type="text" id="nm" placeholder="Full name" autocomplete="off"><input type="text" id="ni" placeholder="Student ID (NIM)" autocomplete="off">
+ <button onclick="begin()" style="margin-top:8px;width:100%">Start Test</button></div>`;
+}
+function begin(){
+ const n=$("nm").value.trim(),m=$("ni").value.trim();
+ if(!n||!m){alert("Please enter your name and student ID.");return}
+ S.name=n;S.nim=m;S.run=true;S.end=Date.now()+DUR*1000;save();build();
+}
+function build(){
+ let h=`<div class="bar"><span>Answered <span id="cnt">${cnt()}</span>/${N}</span><span id="tm">${fmt(left())}</span><span>⚠ <span id="vv">${S.v}</span>/${MAXV}</span></div>`;
+ Q.forEach((q,i)=>{
+  const p=START.indexOf(i);
+  if(p>-1){h+=`<h2>${PARTS[p][0]}</h2>`+(PARTS[p][1]?`<div class="note">${esc(PARTS[p][1])}</div>`:"")}
+  h+=`<div class="c"><p class="t"><b>${i+1}.</b> ${esc(q[0])}</p><div class="opts">`+
+   q[1].map((o,k)=>`<label class="${S.ans[i]===k?"s":""}"><input type="radio" name="q${i}" ${S.ans[i]===k?"checked":""} onchange="pick(${i},${k},this)"><span>${"ABCD"[k]}. ${esc(o)}</span></label>`).join("")+`</div></div>`;
+ });
+ h+=`<button onclick="confirmEnd()" style="width:100%;margin-bottom:30px">Submit Answers</button>`;
+ app.innerHTML=h;window.scrollTo(0,0);
+ clearInterval(T);T=setInterval(()=>{const l=left();$("tm").textContent=fmt(l);if(l<=0)finish("Time up")},1000);
+}
+function pick(i,k,el){
+ S.ans[i]=k;save();$("cnt").textContent=cnt();
+ el.closest(".opts").querySelectorAll("label").forEach(l=>l.classList.remove("s"));el.closest("label").classList.add("s");
+}
+function confirmEnd(){const b=N-cnt();if(confirm(b?`${b} question(s) unanswered (counted wrong). Submit now?`:"Submit your answers?"))finish("Submitted")}
+function viol(why){
+ if(!S.run||S.done||Date.now()-lastV<1500)return;lastV=Date.now();S.v++;save();
+ if($("vv"))$("vv").textContent=S.v;
+ if(S.v>=MAXV){finish("Auto-submit: left page "+S.v+"x");return}
+ $("wt").textContent=`${why} detected. Violation ${S.v} of ${MAXV}. At ${MAXV}, your test is submitted automatically.`;
+ $("warn").style.display="grid";
+}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)viol("Leaving the page")});
+window.addEventListener("blur",()=>viol("Switching window/app"));
+window.addEventListener("beforeunload",e=>{if(S.run&&!S.done){e.preventDefault();e.returnValue=""}});
+document.addEventListener("contextmenu",e=>{if(S.run)e.preventDefault()});
+document.addEventListener("copy",e=>{if(S.run)e.preventDefault()});
+function hash(s){let h=7;for(const c of s)h=(h*31+c.charCodeAt(0))%1000003;return h.toString(36).toUpperCase()}
+function finish(note){
+ if(S.done&&S.code){result();return}
+ S.done=true;S.run=false;clearInterval(T);$("warn").style.display="none";
+ S.sc=S.ans.reduce((a,x,k)=>a+(x!==null&&"ABCD"[x]===K[k]?1:0),0);
+ const as=S.ans.map(x=>x===null?"-":"ABCD"[x]).join("");
+ const base=[S.nim,S.name,S.sc+"/"+N,"V"+S.v,note,new Date().toLocaleString("en-GB"),as].join(" | ");
+ S.code="UTS-GRAMMAR | "+base+" | #"+hash(base);save();result();
+}
+function result(){
+ app.innerHTML=`<div class="c"><h1>Test completed</h1><p>${esc(S.name)} · ${esc(S.nim)}</p>
+ <p style="font-size:36px;color:var(--tx)"><b>${S.sc}/${N}</b> · Score ${Math.round(S.sc/N*100)}</p>
+ <p>Copy the result code below and send it to your lecturer (or take a screenshot of this screen).</p><pre id="cd">${esc(S.code)}</pre>
+ <button onclick="cp()" style="width:100%">Copy result code</button></div>`;window.scrollTo(0,0);
+}
+function cp(){(navigator.clipboard?navigator.clipboard.writeText(S.code):Promise.reject()).then(()=>alert("Copied.")).catch(()=>{const r=document.createRange();r.selectNodeContents($("cd"));getSelection().removeAllRanges();getSelection().addRange(r);alert("Text selected. Press and hold (phone) or Ctrl/Cmd+C (laptop) to copy.")})}
+
+if(S.done&&S.code)result();
+else if(S.run){if(left()<=0)finish("Time up");else{S.v++;save();if(S.v>=MAXV)finish("Auto-submit: reload/leave "+S.v+"x");else build()}}
+else home();
+</script></body></html>
